@@ -1,0 +1,73 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/app_name"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_title"
+            android:textAlignment="center"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="22sp"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:textColorHint="#B0BEC5"
+            android:textColor="@color/colorOnBackground"
+            android:backgroundTint="@color/colorPrimary" />
+
+        <EditText
+            android:id="@+id/etPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColorHint="#B0BEC5"
+            android:textColor="@color/colorOnBackground"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_login"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnToRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_register_nav"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorPrimaryVariant" />
+
+        <Button
+            android:id="@+id/btnToRecover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_recover_nav"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorPrimaryVariant" />
+    </LinearLayout>
+</ScrollView>
