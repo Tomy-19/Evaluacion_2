@@ -7,8 +7,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Evaluacion_2">
 
-        <activity android:name=".RecoverActivity" android:exported="false"/>
-        <activity android:name=".RegisterActivity" android:exported="false"/>
+        <activity android:name=".NewsDetailActivity" android:exported="false" />
+        <activity android:name=".NewsListActivity" android:exported="false" />
+
+        <activity android:name=".RecoverActivity" android:exported="false" />
+        <activity android:name=".RegisterActivity" android:exported="false" />
 
         <activity
             android:name=".LoginActivity"
