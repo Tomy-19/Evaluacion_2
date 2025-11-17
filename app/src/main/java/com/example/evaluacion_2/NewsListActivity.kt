@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.evaluacion_2.news.News
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 
 class NewsListActivity : AppCompatActivity() {
 
-    private lateinit var dbRef: DatabaseReference
     private lateinit var rv: RecyclerView
     private lateinit var adapter: NewsAdapter
     private val newsList = mutableListOf<News>()
@@ -24,7 +23,6 @@ class NewsListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news_list)
 
-        // RecyclerView
         rv = findViewById(R.id.rvNews)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = NewsAdapter(newsList) { news ->
@@ -34,31 +32,34 @@ class NewsListActivity : AppCompatActivity() {
         }
         rv.adapter = adapter
 
-        // Firebase /news
-        dbRef = FirebaseDatabase.getInstance().getReference("news")
-        dbRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        val db = FirebaseFirestore.getInstance()
+        val newsCollection = db.collection("news")
+
+        // Solo noticias aprobadas
+        newsCollection
+            .whereEqualTo("status", "aprovado")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) {
+                    return@addSnapshotListener
+                }
+
                 newsList.clear()
-                for (child in snapshot.children) {
-                    val item = child.getValue(News::class.java)
+                for (doc in snapshot.documents) {
+                    val item = doc.toObject(News::class.java)
                     if (item != null) {
+                        item.id = doc.id
                         newsList.add(item)
                     }
                 }
                 adapter.notifyDataSetChanged()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Podrías mostrar un Toast si quieres
-            }
-        })
-
-        // Texto Cerrar sesión (con confirmación)
+        // Cerrar sesión (texto azul con confirmación)
         val btnLogout = findViewById<TextView>(R.id.btnLogout)
         btnLogout.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Cerrar sesión")
-                .setMessage("Estás a punto de cerrar sesión. ¿Estás seguro?")
+                .setMessage("Estas a punto de cerrar sesión. ¿Estás seguro?")
                 .setPositiveButton("Sí") { _: DialogInterface, _: Int ->
                     FirebaseAuth.getInstance().signOut()
                     val intent = Intent(this, LoginActivity::class.java)

@@ -5,7 +5,8 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.*
+import com.example.evaluacion_2.news.News
+import com.google.firebase.firestore.FirebaseFirestore
 
 class NewsDetailActivity : AppCompatActivity() {
 
@@ -19,8 +20,8 @@ class NewsDetailActivity : AppCompatActivity() {
         tvTitle = findViewById(R.id.tvDetailTitle)
         tvContent = findViewById(R.id.tvDetailContent)
 
-        // Flecha compacta de volver
-        findViewById<ImageButton>(R.id.btnBackToList).setOnClickListener {
+        val btnBack = findViewById<ImageButton>(R.id.btnBackToList)
+        btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
@@ -30,23 +31,23 @@ class NewsDetailActivity : AppCompatActivity() {
             return
         }
 
-        val dbRef = FirebaseDatabase.getInstance()
-            .getReference("news")
-            .child(id)
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("news").document(id)
 
-        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val title = snapshot.child("title").getValue(String::class.java) ?: "Noticia"
-                val content = snapshot.child("content").getValue(String::class.java) ?: ""
-
-                tvTitle.text = title
-                tvContent.text = content
+        docRef.get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val news = doc.toObject(News::class.java)
+                    tvTitle.text = news?.title ?: "Noticia"
+                    tvContent.text = news?.content ?: ""
+                } else {
+                    Toast.makeText(this, "La noticia no existe", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@NewsDetailActivity, "Error al cargar noticia", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al cargar noticia", Toast.LENGTH_SHORT).show()
                 finish()
             }
-        })
     }
 }
