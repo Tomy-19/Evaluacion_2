@@ -1,23 +1,52 @@
 package com.example.evaluacion_2
 
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.evaluacion_2.news.NewsRepository
+import com.google.firebase.database.*
 
 class NewsDetailActivity : AppCompatActivity() {
+
+    private lateinit var tvTitle: TextView
+    private lateinit var tvContent: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news_detail)
 
-        val id = intent.getIntExtra("news_id", -1)
-        val news = NewsRepository.findById(id)
+        tvTitle = findViewById(R.id.tvDetailTitle)
+        tvContent = findViewById(R.id.tvDetailContent)
 
-        findViewById<TextView>(R.id.tvDetailTitle).text = news?.title ?: "Noticia"
-        findViewById<TextView>(R.id.tvDetailContent).text = news?.content ?: ""
-        findViewById<Button>(R.id.btnBackToList).setOnClickListener {
+        // Flecha compacta de volver
+        findViewById<ImageButton>(R.id.btnBackToList).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+        val id = intent.getStringExtra("news_id")
+        if (id.isNullOrEmpty()) {
+            finish()
+            return
+        }
+
+        val dbRef = FirebaseDatabase.getInstance()
+            .getReference("news")
+            .child(id)
+
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val title = snapshot.child("title").getValue(String::class.java) ?: "Noticia"
+                val content = snapshot.child("content").getValue(String::class.java) ?: ""
+
+                tvTitle.text = title
+                tvContent.text = content
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@NewsDetailActivity, "Error al cargar noticia", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        })
     }
 }

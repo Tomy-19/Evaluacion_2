@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.evaluacion_2.news.News
 
 class NewsAdapter(
-    private val items: List<News>,
+    private val items: MutableList<News>,
     private val onClick: (News) -> Unit
 ) : RecyclerView.Adapter<NewsAdapter.VH>() {
 
@@ -18,7 +18,8 @@ class NewsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_news, parent, false)
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_news, parent, false)
         return VH(v)
     }
 

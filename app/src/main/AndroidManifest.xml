@@ -9,6 +9,8 @@
 
         <activity android:name=".NewsDetailActivity" android:exported="false" />
         <activity android:name=".NewsListActivity" android:exported="false" />
+        <activity android:name=".CreateNewsActivity" android:exported="false" />
+
 
         <activity android:name=".RecoverActivity" android:exported="false" />
         <activity android:name=".RegisterActivity" android:exported="false" />
