@@ -78,12 +78,53 @@
         android:layout_below="@id/etSubtitle"
         android:background="#00B8D4" />
 
+    <!-- Imagen de la noticia -->
+    <ImageView
+        android:id="@+id/ivNewsImagePreview"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_below="@id/etSubtitle"
+        android:layout_marginTop="20dp"
+        android:scaleType="centerCrop"
+        android:background="#222222"
+        android:contentDescription="Vista previa imagen" />
+
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivNewsImagePreview"
+        android:layout_marginTop="10dp"
+        android:text="Seleccionar imagen"
+        android:textColor="#000000"
+        android:backgroundTint="#00B8D4" />
+
+    <!-- Campo para ingresar URL de imagen -->
+    <EditText
+        android:id="@+id/etImageUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSelectImage"
+        android:layout_marginTop="20dp"
+        android:hint="URL de la imagen (opcional)"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#CCCCCC"
+        android:background="@android:color/transparent"
+        android:paddingBottom="10dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/etImageUrl"
+        android:background="#00B8D4" />
+
+
     <!-- Contenido -->
     <EditText
         android:id="@+id/etContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/etSubtitle"
+        android:layout_below="@id/btnSelectImage"
         android:layout_marginTop="20dp"
         android:hint="Contenido"
         android:textColor="#FFFFFF"
@@ -91,6 +132,7 @@
         android:background="@android:color/transparent"
         android:inputType="textMultiLine"
         android:minLines="4"
+        android:maxLines="4"
         android:gravity="top"
         android:paddingBottom="10dp" />
 

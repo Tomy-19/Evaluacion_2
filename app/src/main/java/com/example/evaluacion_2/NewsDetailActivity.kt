@@ -1,53 +1,41 @@
-package com.example.evaluacion_2
+package com.example.evaluacion_2.news
 
 import android.os.Bundle
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.evaluacion_2.news.News
+import com.bumptech.glide.Glide
+import com.example.evaluacion_2.databinding.ActivityNewsDetailBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
 class NewsDetailActivity : AppCompatActivity() {
 
-    private lateinit var tvTitle: TextView
-    private lateinit var tvContent: TextView
+    private lateinit var binding: ActivityNewsDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_news_detail)
+        binding = ActivityNewsDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        tvTitle = findViewById(R.id.tvDetailTitle)
-        tvContent = findViewById(R.id.tvDetailContent)
+        val newsId = intent.getStringExtra("newsId") ?: return
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBackToList)
-        btnBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+        binding.btnBackToList.setOnClickListener { finish() }
 
-        val id = intent.getStringExtra("news_id")
-        if (id.isNullOrEmpty()) {
-            finish()
-            return
-        }
+        loadNews(newsId)
+    }
 
-        val db = FirebaseFirestore.getInstance()
-        val docRef = db.collection("news").document(id)
+    private fun loadNews(id: String) {
+        FirebaseFirestore.getInstance()
+            .collection("news")
+            .document(id)
+            .get()
+            .addOnSuccessListener { snap ->
+                val news = snap.toObject(News::class.java) ?: return@addOnSuccessListener
 
-        docRef.get()
-            .addOnSuccessListener { doc ->
-                if (doc.exists()) {
-                    val news = doc.toObject(News::class.java)
-                    tvTitle.text = news?.title ?: "Noticia"
-                    tvContent.text = news?.content ?: ""
-                } else {
-                    Toast.makeText(this, "La noticia no existe", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error al cargar noticia", Toast.LENGTH_SHORT).show()
-                finish()
+                binding.tvDetailTitle.text = news.title
+                binding.tvDetailContent.text = news.content
+
+                Glide.with(this)
+                    .load(news.imageUrl)
+                    .into(binding.ivDetailImage)
             }
     }
 }

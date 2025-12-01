@@ -1,34 +1,43 @@
-package com.example.evaluacion_2
+package com.example.evaluacion_2.news
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.evaluacion_2.news.News
+import com.bumptech.glide.Glide
+import com.example.evaluacion_2.databinding.ItemNewsBinding
 
 class NewsAdapter(
-    private val items: MutableList<News>,
+    private val list: List<News>,
     private val onClick: (News) -> Unit
-) : RecyclerView.Adapter<NewsAdapter.VH>() {
+) : RecyclerView.Adapter<NewsAdapter.NewsHolder>() {
 
-    class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
-        val tvSubtitle: TextView = itemView.findViewById(R.id.tvSubtitle)
+    inner class NewsHolder(val binding: ItemNewsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(news: News) {
+            binding.tvTitle.text = news.title
+            binding.tvSubtitle.text = news.subtitle
+
+            Glide.with(binding.root.context)
+                .load(news.imageUrl)
+                .into(binding.ivItemImage)
+
+            binding.root.setOnClickListener { onClick(news) }
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_news, parent, false)
-        return VH(v)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsHolder {
+        return NewsHolder(
+            ItemNewsBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        val n = items[position]
-        holder.tvTitle.text = n.title
-        holder.tvSubtitle.text = n.subtitle
-        holder.itemView.setOnClickListener { onClick(n) }
-    }
+    override fun getItemCount() = list.size
 
-    override fun getItemCount(): Int = items.size
+    override fun onBindViewHolder(holder: NewsHolder, position: Int) {
+        holder.bind(list[position])
+    }
 }

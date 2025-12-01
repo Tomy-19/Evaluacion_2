@@ -8,5 +8,6 @@ data class News(
     var authorId: String = "",
     var authorName: String = "",
     var status: String = "pending",
-    var createdAt: Long = System.currentTimeMillis()
+    var createdAt: Long = System.currentTimeMillis(),
+    var imageUrl: String = ""
 )
