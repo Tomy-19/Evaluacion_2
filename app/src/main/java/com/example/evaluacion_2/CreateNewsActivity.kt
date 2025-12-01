@@ -8,20 +8,24 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.evaluacion_2.databinding.ActivityCreateNewsBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.firestore.FieldValue
 
 class CreateNewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateNewsBinding
-
     private var selectedImageUri: Uri? = null
     private val PICK_IMAGE = 100
+    private var currentUserName = "Usuario"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateNewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        loadUserName()
 
         binding.btnBackNewsList.setOnClickListener { finish() }
 
@@ -31,9 +35,18 @@ class CreateNewsActivity : AppCompatActivity() {
             startActivityForResult(intent, PICK_IMAGE)
         }
 
-        binding.btnSave.setOnClickListener {
-            saveNewsHandler()
-        }
+        binding.btnSave.setOnClickListener { saveNewsHandler() }
+    }
+
+    private fun loadUserName() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener {
+                currentUserName = it.getString("name") ?: "Usuario"
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -47,7 +60,6 @@ class CreateNewsActivity : AppCompatActivity() {
 
     private fun saveNewsHandler() {
         val title = binding.etTitle.text.toString()
-        val subtitle = binding.etSubtitle.text.toString()
         val content = binding.etContent.text.toString()
         val imageUrlTyped = binding.etImageUrl.text.toString().trim()
 
@@ -85,26 +97,31 @@ class CreateNewsActivity : AppCompatActivity() {
 
     private fun saveNews(imageUrl: String) {
         val db = FirebaseFirestore.getInstance()
-        val id = db.collection("news").document().id
+        val auth = FirebaseAuth.getInstance()
+        val uid = auth.currentUser?.uid ?: ""
 
-        val news = News(
-            id = id,
-            title = binding.etTitle.text.toString(),
-            subtitle = binding.etSubtitle.text.toString(),
-            content = binding.etContent.text.toString(),
-            authorId = "admin",
-            authorName = "Administrador",
-            imageUrl = imageUrl
+        val docRef = db.collection("news").document()
+        val id = docRef.id
+
+        val news = hashMapOf(
+            "id" to id,
+            "title" to binding.etTitle.text.toString(),
+            "subtitle" to binding.etSubtitle.text.toString(),
+            "content" to binding.etContent.text.toString(),
+            "authorId" to uid,
+            "authorName" to currentUserName,
+            "imageUrl" to imageUrl,
+            "status" to "pendiente",
+            "createdAt" to FieldValue.serverTimestamp()
         )
-
-        db.collection("news").document(id)
-            .set(news)
+        docRef.set(news)
             .addOnSuccessListener {
-                Toast.makeText(this, "Noticia creada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Tu noticia está siendo evaluada", Toast.LENGTH_LONG).show()
                 finish()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Error al guardar la noticia", Toast.LENGTH_SHORT).show()
             }
     }
+
 }

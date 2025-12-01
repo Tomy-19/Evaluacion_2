@@ -19,32 +19,31 @@ class RecoverActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val email = findViewById<EditText>(R.id.etEmailRecover)
+        val emailEditText = findViewById<EditText>(R.id.etEmailRecover)
         val btnRecover = findViewById<Button>(R.id.btnRecover)
         val btnBack = findViewById<ImageButton>(R.id.btnBackLogin)
 
-        // Flecha volver → Login
         btnBack.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
 
-        // Enviar correo de recuperación (Firebase Auth)
         btnRecover.setOnClickListener {
-            val emailText = email.text.toString().trim()
-
-            if (emailText.isEmpty()) {
+            val email = emailEditText.text.toString().trim()
+            if (email.isEmpty()) {
                 Toast.makeText(this, "Ingresa un correo válido", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            auth.sendPasswordResetEmail(emailText)
+            auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Se envió un enlace a $emailText", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Correo enviado exitosamente", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
                     } else {
-                        val msg = task.exception?.localizedMessage ?: "Error al enviar el correo"
-                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                        val msg = task.exception?.localizedMessage ?: "Error al enviar correo"
+                        Toast.makeText(this, "Error al enviar correo: $msg", Toast.LENGTH_SHORT).show()
                     }
                 }
         }

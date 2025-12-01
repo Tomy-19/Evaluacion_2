@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
+import com.example.evaluacion_2.news.NewsListActivity
+
 
 class LoginActivity : AppCompatActivity() {
 
