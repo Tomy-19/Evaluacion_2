@@ -1,23 +1,41 @@
-package com.example.evaluacion_2
+package com.example.evaluacion_2.news
 
 import android.os.Bundle
-import android.widget.TextView
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.example.evaluacion_2.news.NewsRepository
+import com.bumptech.glide.Glide
+import com.example.evaluacion_2.databinding.ActivityNewsDetailBinding
+import com.google.firebase.firestore.FirebaseFirestore
 
 class NewsDetailActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityNewsDetailBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_news_detail)
+        binding = ActivityNewsDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val id = intent.getIntExtra("news_id", -1)
-        val news = NewsRepository.findById(id)
+        val newsId = intent.getStringExtra("newsId") ?: return
 
-        findViewById<TextView>(R.id.tvDetailTitle).text = news?.title ?: "Noticia"
-        findViewById<TextView>(R.id.tvDetailContent).text = news?.content ?: ""
-        findViewById<Button>(R.id.btnBackToList).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+        binding.btnBackToList.setOnClickListener { finish() }
+
+        loadNews(newsId)
+    }
+
+    private fun loadNews(id: String) {
+        FirebaseFirestore.getInstance()
+            .collection("news")
+            .document(id)
+            .get()
+            .addOnSuccessListener { snap ->
+                val news = snap.toObject(News::class.java) ?: return@addOnSuccessListener
+
+                binding.tvDetailTitle.text = news.title
+                binding.tvDetailContent.text = news.content
+
+                Glide.with(this)
+                    .load(news.imageUrl)
+                    .into(binding.ivDetailImage)
+            }
     }
 }

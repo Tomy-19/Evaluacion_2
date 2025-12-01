@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "310579310595",
+    "firebase_url": "https://clase-deb01-default-rtdb.firebaseio.com",
+    "project_id": "clase-deb01",
+    "storage_bucket": "clase-deb01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310579310595:android:0ee415c45cced869b65e36",
+        "android_client_info": {
+          "package_name": "com.example.evaluacion_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--LhoHZ8r_V7LLOSa1AB7zRrclyLiXiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
